@@ -1,4 +1,4 @@
-import { pool } from "../config/db"
+import { pool } from "../config/db.js"
 export const connectDB=async()=>{
 
      try {
@@ -6,5 +6,6 @@ export const connectDB=async()=>{
         console.log("PostgreSQL Connected");
 }catch(error){
     console.log("Database connection failed");
+    process.exit(1);
 }
 }
