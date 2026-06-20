@@ -1,3 +1,4 @@
+import { pool } from "../config/db.js";
 
 
 export const handleRegister=async(req,res)=>{
@@ -9,18 +10,32 @@ export const handleRegister=async(req,res)=>{
             message:"Invalid request! all fields are mandatory"
         });
     }
+ ;
+
 
         try{
 
+const result=await pool.query(`INSERT INTO users (name,email,password)
+     VALUES ($1,$2,$3)
+     RETURNING name,email;
+     `,[name,email,password]);
 
+console.log('Data Inserted successfylly');
 
+return res.status(201).json({
+    message: "User registered successfully",
+    success: true,
+    user: result.rows[0]
+});
 
 
         }catch(error){
+            console.log(error);
             return res.status(500).json({
                 message:"Internal server error"
             })
         }
+        
     
 
 };
