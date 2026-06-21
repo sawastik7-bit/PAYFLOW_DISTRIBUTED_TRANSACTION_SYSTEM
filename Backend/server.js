@@ -14,7 +14,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 
-app.use("/payflow",authRouter);
+app.use("/payflow",authRouter); // this is the authentication routes
 
 
 app.listen(process.env.PORT || 5000,()=>{
