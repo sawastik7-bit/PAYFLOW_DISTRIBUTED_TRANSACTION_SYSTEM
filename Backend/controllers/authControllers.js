@@ -78,6 +78,7 @@ const result=await pool.query(`
     }
 
     const payload={
+        userId:result.rows[0].id,
         name:result.rows[0].name,
         email:result.rows[0].email
     };

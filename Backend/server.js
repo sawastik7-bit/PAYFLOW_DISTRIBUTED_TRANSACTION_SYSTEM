@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { connectDB } from './connection/connectDB.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import paymentRouter from './Routes/paymentRoutes.js';
 dotenv.config();
 connectDB();
 const app=express();
@@ -15,6 +16,7 @@ app.use(express.json());
 
 
 app.use("/payflow",authRouter); // this is the authentication routes
+app.use("/payflow/api/payment",paymentRouter);
 
 
 app.listen(process.env.PORT || 5000,()=>{

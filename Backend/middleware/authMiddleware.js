@@ -19,12 +19,7 @@ req.user=result;
     console.log("auth successfull");
 
 next();
-
-
-
-
-
-        }catch(error){
+}catch(error){
             console.log(error);
             return res.status(401).json({
     success: false,
