@@ -42,6 +42,7 @@ return res.status(201).json({
     
 
 };
+
 export const handleLogin=async(req,res)=>{
     const{email,password}=req.body;
 

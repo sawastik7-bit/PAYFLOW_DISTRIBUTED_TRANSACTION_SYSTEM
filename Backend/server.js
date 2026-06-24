@@ -16,7 +16,7 @@ app.use(express.json());
 
 
 app.use("/payflow",authRouter); // this is the authentication routes
-app.use("/payflow/api/payment",paymentRouter);
+app.use("/payflow/api/payment",paymentRouter); // this is the payment route
 
 
 app.listen(process.env.PORT || 5000,()=>{
