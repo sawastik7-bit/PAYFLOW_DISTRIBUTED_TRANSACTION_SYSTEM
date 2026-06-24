@@ -1,16 +1,20 @@
 import { userRegistrationSchema,userLoginSchema } from "../validation/validateData"
 
-export const LoginvalidationMiddleware=(req,res,next)=>{
+export const validationMiddleware=async(schema)=>{
 
-    try{
-        const result=userLoginSchema.safeParse(req.body);
+ return (req,res,next)=>{
+        
+         try{
+        const result=schema.safeParse(req.body);
         if(!result.success){
 
 return res.status(400).json({
     success:false,
-    errors:result.error.issues
+    errors:result.error
 });
 }
+
+req.body=result.data;
 
 next();
     }catch(error){
@@ -18,21 +22,6 @@ next();
     }
 
 }
-export const registerValidationMiddleware=(req,res,next)=>{
 
-    try{
-        const result=userRegistrationSchema.safeParse(req.body);
-        if(!result.success){
-
-return res.status(400).json({
-    success:false,
-    errors:result.error.issues
-});
-}
-
-next();
-    }catch(error){
-        return res.status(500).json("Internal server error");
     }
 
-}
