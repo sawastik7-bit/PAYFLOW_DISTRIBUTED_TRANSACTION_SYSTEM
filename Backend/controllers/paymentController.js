@@ -2,6 +2,7 @@ import razorpayInstance from "../Instances/razorpay";
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 import { pool } from "../config/db";
+import { success } from "zod";
 dotenv.config();
 
 export const handleOrderCreate=async(req,res)=>{
@@ -243,6 +244,39 @@ await client.query(
     }
 
 
+}
+
+
+
+export const handleFetchBalance=async(req,res)=>{
+
+
+    try{
+    const user_id=req.user.userId;
+
+    
+
+    const result=await pool.query(
+        `SELECT balance FROM wallets
+        WHERE user_id=$1
+        `,
+        [user_id]
+    );
+
+    if(result.rowCount==0) return res.status(404).json({success:false,message:"Wallet not found"});
+
+    const balance=result.rows[0].balance;
+
+    return res.status(200).json({
+        message:"Balance fetched successfully",
+        success:true,
+        balance
+    });
+
+}catch(error){
+    return res.status(500).json({success:false,message:"Internal server error"});
+}
+    
 }
 
 
