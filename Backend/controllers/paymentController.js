@@ -28,10 +28,23 @@ export const handleVerificationOfPayment=async(req,res)=>{
         razorpay_order_id,
         razorpay_signature}=req.body;
 
-        const generatedSignature=createdSignature(razorpay_payment_id,razorpay_order_id);
+        if (
+    !razorpay_order_id ||
+    !razorpay_payment_id ||
+    !razorpay_signature
+) {
+    return res.status(400).json({
+        success: false,
+        message: "Missing payment details"
+    });
+}
 
-        
+  
         try{
+
+        const generatedSignature=generateHmacSignature(razorpay_payment_id,razorpay_order_id);
+
+      
 
 if(generatedSignature!==razorpay_signature){
     return res.status(400).json({
@@ -42,8 +55,12 @@ if(generatedSignature!==razorpay_signature){
 
 }
 
+return res.status(200).json({
+    success: true,
+    message: "Payment verified"
+});
 
-        }catch(error){
+ }catch(error){
             return res.status(500).send("Internal server Error");
         }
 
@@ -65,7 +82,7 @@ if(generatedSignature!==razorpay_signature){
 
 
 
-const createdSignature=(razorpay_payment_id,razorpay_order_id)=>{
+const generateHmacSignature=(razorpay_payment_id,razorpay_order_id)=>{
 const hmac=crypto.createHmac('sha256',process.env.RAZORPAY_KEY_SECRET);
 
         hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
