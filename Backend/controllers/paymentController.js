@@ -156,7 +156,7 @@ await client.query("BEGIN");
  const balanceObj=await client.query(`
         SELECT balance FROM wallets
         WHERE user_id=$1
-        `,[sender_id]);
+         FOR UPDATE`,[sender_id]);
 
 if(balanceObj.rowCount === 0){
     await client.query("ROLLBACK");
@@ -189,6 +189,8 @@ await client.query("ROLLBACK");
 return res.status(404).json("Receiver not found");
 
 }
+
+
 
 await client.query(
             `
