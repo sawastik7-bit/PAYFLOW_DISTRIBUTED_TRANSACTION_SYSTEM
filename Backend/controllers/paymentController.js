@@ -5,6 +5,11 @@ import { pool } from "../config/db.js";
 import { success } from "zod";
 import redisClient from "../config/redis.js";
 import { json } from "body-parser";
+import notificationQueue from "../queue/notificationQueue.js";
+
+
+
+
 dotenv.config();
 
 export const handleOrderCreate=async(req,res)=>{
@@ -183,6 +188,7 @@ const receiver = await client.query(
 SELECT id
 FROM wallets
 WHERE user_id=$1
+FOR UPDATE
 `,
 [receiver_id]
 );
@@ -225,7 +231,25 @@ await client.query(
 
 await redisClient.del(`balance:${sender_id}`);
 await redisClient.del(`balance:${receiver_id}`);
-await redisClient.del(`balance:${userId}`);
+
+
+const receiverDetails = await client.query(
+    `
+    SELECT email
+    FROM users
+    WHERE id = $1
+    `,
+    [receiver_id]
+);
+
+await notificationQueue.add("payment-success", {
+    receiverEmail: receiverDetails.rows[0].email,
+    senderName: req.user.name,
+    amount,
+    transactionType: "P2P",
+    transactionTime: new Date(),
+});
+
 
 
             return res.status(200).json({
