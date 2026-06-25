@@ -282,14 +282,42 @@ export const handleFetchBalance=async(req,res)=>{
 
 export const handleFetchTransactions=async(req,res)=>{
     
-    const type=req.params.type;
+    const userId=req.user.userId
 
-    if(!type){
-        return res.status(400).json({success:false,message:"All Fields are mandatory"});
+    try{
+    const result=await pool.query(
+        `
+        SELECT id,
+sender_id,
+receiver_id,
+amount,
+status,
+type,
+created_at
+ FROM transactions
+        WHERE sender_id=$1
+        OR receiver_id=$1
+        ORDER BY created_at DESC;
+        `,[userId]
+    );
 
-    }
 
 
+    const transactions=result.rows;
+
+    return res.status(200).json({
+        success:true,
+        message:"Transactions fetched successfully",
+        transactions
+    });
+
+
+}catch(error){
+    return res.status(500).json({
+        success:false,
+        message:"Internal server error"
+    })
+}
 
 }
 
