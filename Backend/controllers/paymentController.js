@@ -1,8 +1,10 @@
-import razorpayInstance from "../Instances/razorpay";
+import razorpayInstance from "../Instances/razorpay.js";
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 import { pool } from "../config/db.js";
 import { success } from "zod";
+import redisClient from "../config/redis.js";
+import { json } from "body-parser";
 dotenv.config();
 
 export const handleOrderCreate=async(req,res)=>{
@@ -221,8 +223,9 @@ await client.query(
 
             await client.query("COMMIT");
 
-
-
+await redisClient.del(`balance:${sender_id}`);
+await redisClient.del(`balance:${receiver_id}`);
+await redisClient.del(`balance:${userId}`);
 
 
             return res.status(200).json({
@@ -246,15 +249,23 @@ await client.query(
 
 }
 
-
-
 export const handleFetchBalance=async(req,res)=>{
 
 
     try{
     const user_id=req.user.userId;
 
-    
+    const cacheKey=`balance:${userId}`;
+const cachedBalance=await redisClient.get(cacheKey);
+
+if(cachedBalance){
+    return res.status(200).json({
+        success:true,
+        message:"Balance fetched successfully",
+        balance:JSON.parse(cachedBalance)
+    })
+}
+
 
     const result=await pool.query(
         `SELECT balance FROM wallets
@@ -266,6 +277,13 @@ export const handleFetchBalance=async(req,res)=>{
     if(result.rowCount==0) return res.status(404).json({success:false,message:"Wallet not found"});
 
     const balance=result.rows[0].balance;
+
+
+    await redisClient.setEx(
+        cacheKey,
+        60,
+        JSON.stringify(balance)
+    );
 
     return res.status(200).json({
         message:"Balance fetched successfully",
@@ -320,14 +338,6 @@ created_at
 }
 
 }
-
-
-
-
-
-
-
-
 
 const generateHmacSignature=(razorpay_payment_id,razorpay_order_id)=>{
 const hmac=crypto.createHmac('sha256',process.env.RAZORPAY_KEY_SECRET);

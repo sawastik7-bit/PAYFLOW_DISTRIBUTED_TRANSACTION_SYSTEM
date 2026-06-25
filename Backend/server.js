@@ -5,9 +5,12 @@ import { connectDB } from './connection/connectDB.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import paymentRouter from './Routes/paymentRoutes.js';
+import {limiter,speedLimiter} from './middleware/rateLimit.js';
+
 dotenv.config();
 connectDB();
 const app=express();
+
 app.use(cors({
     origin:"*"
 }));
