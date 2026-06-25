@@ -1,7 +1,7 @@
 import razorpayInstance from "../Instances/razorpay";
 import crypto from 'crypto';
 import dotenv from 'dotenv';
-import { pool } from "../config/db";
+import { pool } from "../config/db.js";
 import { success } from "zod";
 dotenv.config();
 
@@ -278,6 +278,21 @@ export const handleFetchBalance=async(req,res)=>{
 }
     
 }
+
+
+export const handleFetchTransactions=async(req,res)=>{
+    
+    const type=req.params.type;
+
+    if(!type){
+        return res.status(400).json({success:false,message:"All Fields are mandatory"});
+
+    }
+
+
+
+}
+
 
 
 
