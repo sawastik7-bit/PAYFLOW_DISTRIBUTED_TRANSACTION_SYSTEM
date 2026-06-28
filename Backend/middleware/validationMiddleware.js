@@ -1,4 +1,3 @@
-import { userRegistrationSchema,userLoginSchema } from "../validation/validateData.js"
 
 export const validationMiddleware=async(schema)=>{
 

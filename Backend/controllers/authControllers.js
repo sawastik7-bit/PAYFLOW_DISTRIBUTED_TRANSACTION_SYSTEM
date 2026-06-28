@@ -6,14 +6,6 @@ import jwt from 'jsonwebtoken';
 export const handleRegister=async(req,res)=>{
     const{name,email,password}=req.body;
 
-    if(!name || !email || !password){
-        console.log("all fields are mandatory");
-        return res.status(400).json({
-            message:"Invalid request! all fields are mandatory"
-        });
-    }
- ;
-
  const hashedPass=await bcrypt.hash(password,10);
 
         try{
@@ -46,12 +38,7 @@ return res.status(201).json({
 export const handleLogin=async(req,res)=>{
     const{email,password}=req.body;
 
-    if(!email || !password){
-        console.log("all fields are mandatory");
-        return res.status(400).json({
-            message:"Invalid request! all fields are mandatory"
-        });
-    }
+
     try{
 
 const result=await pool.query(`

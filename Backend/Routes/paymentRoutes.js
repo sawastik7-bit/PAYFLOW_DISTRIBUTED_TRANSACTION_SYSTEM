@@ -1,5 +1,5 @@
 import express from 'express';
-import razorpayInstance from '../Instances/razorpay.js';
+
 import { authMiddleware } from '../middleware/authMiddleware.js';
 import { handleOrderCreate,handleVerificationOfPayment,sendMoneyToUser,handleFetchBalance,handleFetchTransactions } from '../controllers/paymentController.js';
 import { limiter, speedLimiter } from '../middleware/rateLimit.js';
