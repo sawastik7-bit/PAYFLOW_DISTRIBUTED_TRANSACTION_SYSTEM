@@ -138,6 +138,7 @@ export const handleVerificationOfPayment = async (req, res) => {
 
 export const sendMoneyToUser=async(req,res)=>{
     const {amount,receiver_id}=req.body;
+    
 if (!amount || amount <= 0) {
     return res.status(400).json({
         success: false,
